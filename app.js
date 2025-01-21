@@ -17,10 +17,12 @@ const ALLOWED_HOSTS = ['symphony-rpc.kleomedes.network', 'symphony-api.kleomedes
 // Middleware to validate and parse the target URL
 app.use('/:target(*)', (req, res, next) => {
   const targetUrl = req.params.target;
+  const queryParams = req.query;
 
   try {
     // Ensure the target URL is valid and append the protocol if missing
     const url = new URL(targetUrl.startsWith('http') ? targetUrl : `https://${targetUrl}`);
+    url.search = new URLSearchParams(queryParams).toString();
 
     if (ALLOWED_HOSTS.indexOf(url.hostname) === -1) res.status(400).json({ error: 'Invalid target URL ' + url.hostname });
 
